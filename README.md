@@ -27,5 +27,30 @@ The frontend interface for the Smart Wildlife Conservation System. This applicat
 
 1. **Clone the repository and checkout dev:**
    ```bash
-   git clone 
+   git clone https://github.com/HarithManjuka/wildlife-monitoring-frontend.git
+   cd wildlife-monitoring-frontend
    git checkout dev
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   # Update VITE_PORT (7051) and VITE_API_BASE_URL (http://localhost:7050/api) in .env
+   ```
+
+4. **Run development server:**
+   ```bash
+   npm run dev
+   # Operations Portal runs on http://localhost:7051
+   ```
+
+5. **Lint and build for production:**
+   ```bash
+   npm run lint
+   npm run build
+   ```
