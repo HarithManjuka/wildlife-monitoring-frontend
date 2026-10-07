@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
 import Login from './pages/Login';
+import ConflictsDashboard from './pages/ConflictsDashboard';
 import DashboardLayout from './components/DashboardLayout';
-import ConflictQueue from './components/ConflictQueue';
 import SystemOverview from './components/SystemOverview';
 
 // Mock empty pages for the other team members to build out
@@ -29,7 +29,7 @@ function AppRoutes() {
   const getIndexRoute = () => {
     if (!user) return '/';
     if (user.role === 'RANGER') return '/patrol';
-    if (user.role === 'LIAISON_OFFICER') return '/conflicts';
+    if (user.role === 'LIAISON_OFFICER') return '/dashboard';
     if (user.role === 'PARK_MANAGER') return '/analytics';
     return '/dashboard';
   };
@@ -49,7 +49,7 @@ function AppRoutes() {
         <Route path="/alerts" element={<TempPage title="Sensor Alerts & Geofences (K.M.S.G.S.C. Karunanayake)" />} />
         
         {/* UC-03 - Your Page */}
-        <Route path="/conflicts" element={<ConflictQueue />} />
+        <Route path="/conflicts" element={<ConflictsDashboard />} />
         
         {/* UC-04 */}
         <Route path="/analytics" element={<TempPage title="Conservation Analytics Dashboard (J.R.I.C.S. Jayakody)" />} />

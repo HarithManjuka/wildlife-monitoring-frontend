@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Shield, Map, AlertTriangle, Users, BarChart3, LogOut } from 'lucide-react';
+import dashboardLogo from '../assets/dashboard_logo.png';
 
 export default function DashboardLayout() {
   const { user, logout } = useContext(AuthContext);
@@ -18,7 +19,7 @@ export default function DashboardLayout() {
     { name: 'Dashboard', path: '/dashboard', icon: Shield, roles: ['LIAISON_OFFICER', 'PARK_MANAGER', 'SENSOR_DISPATCHER'] },
     { name: 'Field Patrol', path: '/patrol', icon: Map, roles: ['RANGER'] },
     { name: 'Sensor Alerts', path: '/alerts', icon: AlertTriangle, roles: ['RANGER', 'SENSOR_DISPATCHER'] },
-    { name: 'Community Reports', path: '/conflicts', icon: Users, roles: ['LIAISON_OFFICER'] },
+    { name: 'Community Reports', path: '/conflicts', icon: Users, roles: ['LIAISON_OFFICER', 'PARK_MANAGER'] },
     { name: 'Analytics', path: '/analytics', icon: BarChart3, roles: ['PARK_MANAGER'] },
   ];
 
@@ -30,9 +31,12 @@ export default function DashboardLayout() {
       {/* Desktop Sidebar (Hidden on mobile) */}
       <div className="hidden md:flex md:flex-shrink-0">
         <div className="flex flex-col w-64 border-r border-stone-200 bg-white">
-          <div className="h-16 flex items-center px-6 border-b border-stone-200 bg-emerald-800">
-            <Shield className="h-8 w-8 text-white" />
-            <span className="ml-3 text-white font-bold text-lg">WildGuard Ops</span>
+          <div className="h-24 flex items-center justify-center px-2 border-b border-emerald-900/60 bg-emerald-800">
+            <img
+              src={dashboardLogo}
+              alt="WildGuard Ops"
+              className="h-[74px] w-auto max-w-[246px] object-contain select-none"
+            />
           </div>
           <div className="flex-1 flex flex-col overflow-y-auto pt-5 pb-4">
             <div className="px-6 mb-6">
@@ -60,10 +64,13 @@ export default function DashboardLayout() {
       {/* Main Content Area */}
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         {/* Mobile Topbar */}
-        <div className="md:hidden flex items-center justify-between h-16 bg-emerald-800 px-4">
+        <div className="md:hidden flex items-center justify-between h-20 bg-emerald-800 px-4">
           <div className="flex items-center">
-            <Shield className="h-6 w-6 text-white" />
-            <span className="ml-2 text-white font-bold">WildGuard</span>
+            <img
+              src={dashboardLogo}
+              alt="WildGuard Ops"
+              className="h-14 w-auto max-w-[220px] object-contain select-none"
+            />
           </div>
           <button onClick={handleLogout} className="text-white cursor-pointer"><LogOut className="h-5 w-5"/></button>
         </div>
