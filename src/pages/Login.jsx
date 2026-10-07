@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Leaf, Activity, Map } from 'lucide-react';
+import loginLogo from '../assets/login_logo.png';
 
 const mockAccounts = [
   { name: 'Abeykoon', role: 'Liaison Officer', email: 'harith@gmail.com', pass: 'Harith123', icon: Shield, color: 'bg-emerald-100 text-emerald-700' },
@@ -36,13 +37,15 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-stone-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Shield className="mx-auto h-12 w-12 text-emerald-800" />
-        <h2 className="mt-6 text-3xl font-extrabold text-stone-900">WildGuard Ops</h2>
-        <p className="mt-2 text-sm text-stone-600">Smart Wildlife Conservation Portal</p>
+      <div className="sm:mx-auto sm:w-full sm:max-w-lg text-center flex flex-col items-center justify-center px-4">
+        <img
+          src={loginLogo}
+          alt="WildGuard Ops - Smart Wildlife Conservation Portal"
+          className="mx-auto h-36 sm:h-44 md:h-48 w-auto max-w-full object-contain select-none"
+        />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-4 sm:mt-6 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-stone-100">
           {error && <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">{error}</div>}
           
