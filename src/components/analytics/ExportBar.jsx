@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Download, FileText, AlertTriangle, CheckCircle } from 'lucide-react';
+import { AuthContext } from '../../context/AuthContext';
 import { buildPdfReport } from '../../utils/exporters/pdfReportBuilder';
 import { buildCsvReport } from '../../utils/exporters/csvReportBuilder';
 import { exportReport } from '../../services/analyticsService';
@@ -17,6 +18,7 @@ function downloadFile(content, filename, mime = 'text/plain') {
 }
 
 export default function ExportBar({ report }) {
+  const { user } = useContext(AuthContext);
   const [exporting, setExporting] = useState(null);
   const [pdfError, setPdfError] = useState(null);
   const [successNotice, setSuccessNotice] = useState(null);
@@ -29,7 +31,7 @@ export default function ExportBar({ report }) {
 
     try {
       if (format === 'PDF') {
-        const doc = buildPdfReport(report);
+        const doc = buildPdfReport(report, user);
         const filename = `report_${report.reportId || 'analytics'}_${Date.now()}.pdf`;
         doc.save(filename);
 
@@ -40,7 +42,7 @@ export default function ExportBar({ report }) {
         setTimeout(() => setSuccessNotice(null), 4000);
       } else {
         // CSV export via dedicated CSV builder
-        const csvContent = buildCsvReport(report);
+        const csvContent = buildCsvReport(report, user);
         const filename = `report_${report.reportId || 'analytics'}_${Date.now()}.csv`;
         downloadFile(csvContent, filename, 'text/csv;charset=utf-8;');
 

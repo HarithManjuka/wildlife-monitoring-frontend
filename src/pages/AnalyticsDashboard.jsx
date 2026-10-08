@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import {
   AlertTriangle,
   Users,
@@ -51,6 +52,7 @@ const SEVERITY_BADGE = {
 
 export default function AnalyticsDashboard() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [summary, setSummary] = useState(null);
   const [report, setReport] = useState(null);
   const [queue, setQueue] = useState([]);
@@ -74,7 +76,7 @@ export default function AnalyticsDashboard() {
     setError(null);
     try {
       const r = await fetchReport(criteria);
-      setReport(r);
+      setReport({ ...r, criteria });
       // Refresh audit logs after generating report
       fetchAuditLogs(200).then((logs) => setAuditLogs(logs));
     } catch {
@@ -530,7 +532,7 @@ export default function AnalyticsDashboard() {
 
                     <div className="flex items-center gap-1.5 self-end sm:self-center">
                       <button
-                        onClick={() => downloadAuditPdf(log)}
+                        onClick={() => downloadAuditPdf(log, user)}
                         className="px-2 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-semibold cursor-pointer transition inline-flex items-center gap-1 border border-stone-200"
                         title="Download PDF Report (Summary & Filters)"
                       >
@@ -538,7 +540,7 @@ export default function AnalyticsDashboard() {
                         PDF
                       </button>
                       <button
-                        onClick={() => downloadAuditCsv(log)}
+                        onClick={() => downloadAuditCsv(log, user)}
                         className="px-2 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-semibold cursor-pointer transition inline-flex items-center gap-1 border border-stone-200"
                         title="Download CSV Report (Summary & Filters)"
                       >
