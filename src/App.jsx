@@ -4,6 +4,9 @@ import { useContext } from 'react';
 import Login from './pages/Login';
 import ConflictsDashboard from './pages/ConflictsDashboard';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import PatrolCoveragePage from './pages/PatrolCoveragePage';
+import CommunityQueuePage from './pages/CommunityQueuePage';
+import AuditTrailPage from './pages/AuditTrailPage';
 import PatrolDashboard from './pages/PatrolDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SystemOverview from './components/SystemOverview';
@@ -53,8 +56,11 @@ function AppRoutes() {
         {/* UC-03 - Your Page */}
         <Route path="/conflicts" element={<ConflictsDashboard />} />
 
-        {/* Conservation Analytics */}
+        {/* Conservation Analytics & Park Manager views */}
         <Route path="/analytics" element={<AnalyticsDashboard />} />
+        <Route path="/patrol-coverage" element={<PatrolCoveragePage />} />
+        <Route path="/community-queue" element={<CommunityQueuePage />} />
+        <Route path="/audit-trail" element={<AuditTrailPage />} />
       </Route>
 
       {/* Fallback route */}
