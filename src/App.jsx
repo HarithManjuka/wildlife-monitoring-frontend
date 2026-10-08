@@ -7,6 +7,7 @@ import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import PatrolCoveragePage from './pages/PatrolCoveragePage';
 import CommunityQueuePage from './pages/CommunityQueuePage';
 import AuditTrailPage from './pages/AuditTrailPage';
+import PatrolDashboard from './pages/PatrolDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SystemOverview from './components/SystemOverview';
 
@@ -46,8 +47,8 @@ function AppRoutes() {
         {/* Operations Overview & Health Diagnostics (Original flow preserved) */}
         <Route path="/dashboard" element={<SystemOverview />} />
 
-        {/* UC-01 */}
-        <Route path="/patrol" element={<TempPage title="Active Patrol Map (M.U. Handaragama)" />} />
+        {/* UC-01: Field Patrols & Incidents (M.U. Handaragama) */}
+        <Route path="/patrol" element={<PatrolDashboard />} />
 
         {/* UC-02 */}
         <Route path="/alerts" element={<TempPage title="Sensor Alerts & Geofences (K.M.S.G.S.C. Karunanayake)" />} />
