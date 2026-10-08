@@ -508,9 +508,11 @@ export default function AnalyticsDashboard() {
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-xs font-bold text-emerald-800">{log.reportId}</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                          log.status === 'SUCCESS' || log.status === 'LIMITED_DATA'
+                          log.status === 'SUCCESS' || log.status === 'SUFFICIENT_DATA'
                             ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                            : 'bg-amber-50 text-amber-800 border-amber-200'
+                            : log.status === 'LIMITED_DATA'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : 'bg-rose-50 text-rose-800 border-rose-200'
                         }`}>
                           {log.status}
                         </span>
