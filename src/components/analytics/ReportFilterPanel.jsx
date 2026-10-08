@@ -14,7 +14,7 @@ const defaultTo = today.toISOString().slice(0, 10);
 const defaultFrom = new Date(today.setDate(today.getDate() - 30)).toISOString().slice(0, 10);
 
 export default function ReportFilterPanel({ onGenerate, loading }) {
-  const [criteria, setCriteria] = window.React.useState({
+  const [criteria, setCriteria] = useState({
     park: 'ALL',
     dateFrom: defaultFrom,
     dateTo: defaultTo,

@@ -76,6 +76,18 @@ export default function AnalyticsDashboard() {
     }
   }, []);
 
+  // Auto-generate initial report on mount
+  useEffect(() => {
+    handleGenerateReport({
+      park: 'ALL',
+      dateFrom: new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10),
+      dateTo: new Date().toISOString().slice(0, 10),
+      reportType: 'INCIDENT_ANALYSIS',
+      incidentType: 'ALL',
+      severity: 'ALL',
+    });
+  }, [handleGenerateReport]);
+
   // Stat card definitions 
   const statCards = [
     { icon: AlertTriangle, label: 'Total Incidents', value: summary?.totalIncidents, color: 'rose', delta: undefined },
