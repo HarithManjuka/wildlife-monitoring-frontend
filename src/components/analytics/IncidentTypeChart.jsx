@@ -1,26 +1,30 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-const COLORS = ['#10b981', '#f59e0b', '#ef4444', '#6366f1', '#ec4899', '#14b8a6'];
+const COLORS = ['#047857', '#d97706', '#dc2626', '#4f46e5', '#db2777', '#0d9488'];
 
 const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-stone-900 border border-stone-700 rounded-xl px-4 py-2 shadow-xl text-xs">
+    <div className="bg-white border border-stone-200 rounded-xl px-4 py-2 shadow-lg text-xs">
       <p style={{ color: payload[0].payload.fill }} className="font-semibold">{payload[0].name}</p>
-      <p className="text-stone-300">Count: <span className="font-bold text-white">{payload[0].value}</span></p>
+      <p className="text-stone-600">Count: <span className="font-bold text-stone-900">{payload[0].value}</span></p>
     </div>
   );
 };
 
 export default function IncidentTypeChart({ byType = {}, loading }) {
-  if (loading) return <div className="h-64 rounded-xl bg-stone-800/40 animate-pulse" />;
+  if (loading) return <div className="h-64 rounded-xl bg-stone-100 animate-pulse" />;
 
   const data = Object.entries(byType)
     .filter(([, v]) => v > 0)
     .map(([name, value], i) => ({ name, value, fill: COLORS[i % COLORS.length] }));
 
   if (!data.length) {
-    return <div className="h-64 flex items-center justify-center text-stone-500 text-sm">No incident type data.</div>;
+    return (
+      <div className="h-64 flex items-center justify-center text-stone-400 text-xs">
+        No incident category logs for this window.
+      </div>
+    );
   }
 
   return (
@@ -46,7 +50,7 @@ export default function IncidentTypeChart({ byType = {}, loading }) {
           verticalAlign="middle"
           iconType="circle"
           iconSize={8}
-          wrapperStyle={{ fontSize: '11px', color: '#a8a29e' }}
+          wrapperStyle={{ fontSize: '11px', color: '#57534e' }}
         />
       </PieChart>
     </ResponsiveContainer>
