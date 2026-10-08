@@ -17,7 +17,7 @@ export default function DashboardLayout() {
   // Define navigation based on role
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Shield, roles: ['LIAISON_OFFICER', 'PARK_MANAGER', 'SENSOR_DISPATCHER'] },
-    { name: 'Field Patrol', path: '/patrol', icon: Map, roles: ['RANGER'] },
+    { name: 'Field Patrol', path: '/patrol', icon: Map, roles: ['RANGER', 'PARK_MANAGER', 'LIAISON_OFFICER'] },
     { name: 'Sensor Alerts', path: '/alerts', icon: AlertTriangle, roles: ['RANGER', 'SENSOR_DISPATCHER'] },
     { name: 'Community Reports', path: '/conflicts', icon: Users, roles: ['LIAISON_OFFICER', 'PARK_MANAGER'] },
     { name: 'Analytics', path: '/analytics', icon: BarChart3, roles: ['PARK_MANAGER'] },

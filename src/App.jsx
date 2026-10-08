@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import Login from './pages/Login';
 import ConflictsDashboard from './pages/ConflictsDashboard';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import PatrolDashboard from './pages/PatrolDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SystemOverview from './components/SystemOverview';
 
@@ -43,8 +44,8 @@ function AppRoutes() {
         {/* Operations Overview & Health Diagnostics (Original flow preserved) */}
         <Route path="/dashboard" element={<SystemOverview />} />
 
-        {/* UC-01 */}
-        <Route path="/patrol" element={<TempPage title="Active Patrol Map (M.U. Handaragama)" />} />
+        {/* UC-01: Field Patrols & Incidents (M.U. Handaragama) */}
+        <Route path="/patrol" element={<PatrolDashboard />} />
 
         {/* UC-02 */}
         <Route path="/alerts" element={<TempPage title="Sensor Alerts & Geofences (K.M.S.G.S.C. Karunanayake)" />} />
