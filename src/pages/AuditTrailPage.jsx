@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import {
   FileText,
   RefreshCw,
@@ -20,6 +21,7 @@ import {
 
 export default function AuditTrailPage() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -85,9 +87,9 @@ export default function AuditTrailPage() {
     try {
       let filename = '';
       if (format === 'PDF') {
-        filename = downloadAuditPdf(log);
+        filename = downloadAuditPdf(log, user);
       } else {
-        filename = downloadAuditCsv(log);
+        filename = downloadAuditCsv(log, user);
       }
       setDownloadNotice(`Downloaded ${filename} (Summary & Filters)`);
       setTimeout(() => setDownloadNotice(null), 4000);
