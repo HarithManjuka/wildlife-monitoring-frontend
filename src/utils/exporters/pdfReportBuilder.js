@@ -105,7 +105,12 @@ export function buildPdfReport(report = {}, currentUser = null) {
   doc.setTextColor(71, 85, 105);
   doc.text(`Evaluation Status: `, 115, 45);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(6, 95, 70);
+  const isLimitedStatus = status.includes('LIMITED') || status === 'LIMITED_DATA';
+  if (isLimitedStatus) {
+    doc.setTextColor(217, 119, 6); // Amber-600
+  } else {
+    doc.setTextColor(6, 95, 70); // Forest emerald
+  }
   doc.text(status, 142, 45);
 
   if (report.criteria) {

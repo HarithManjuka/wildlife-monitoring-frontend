@@ -120,12 +120,13 @@ export function buildAuditPdfReport(log = {}, currentUser = null) {
   doc.line(14, 56, pageWidth - 14, 56);
 
   const boxWidth = (pageWidth - 28 - 9) / 4;
-  const metrics = [
-    { label: 'RECORD COUNT', val: String(recordCount), color: [15, 23, 42] },
-    { label: 'AUDIT STATUS', val: String(status), color: [4, 120, 87] },
-    { label: 'EXECUTION TYPE', val: String(reportType.slice(0, 10)), color: [2, 132, 199] },
-    { label: 'SECURITY ROLE', val: 'PARK MGR', color: [100, 116, 139] },
-  ];
+    const statusColor = status === 'LIMITED_DATA' ? [217, 119, 6] : (status === 'SUCCESS' ? [4, 120, 87] : [225, 29, 72]);
+    const metrics = [
+      { label: 'RECORD COUNT', val: String(recordCount), color: [15, 23, 42] },
+      { label: 'AUDIT STATUS', val: String(status), color: statusColor },
+      { label: 'EXECUTION TYPE', val: String(reportType.slice(0, 10)), color: [2, 132, 199] },
+      { label: 'SECURITY ROLE', val: 'PARK MGR', color: [100, 116, 139] },
+    ];
 
   metrics.forEach((m, idx) => {
     const x = 14 + idx * (boxWidth + 3);

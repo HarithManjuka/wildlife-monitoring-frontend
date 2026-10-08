@@ -296,10 +296,13 @@ export default function AuditTrailPage() {
                     </td>
                     <td className="py-2.5 px-3">
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${log.status === 'SUCCESS' || log.status === 'LIMITED_DATA'
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          log.status === 'SUCCESS' || log.status === 'SUFFICIENT_DATA'
                             ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                            : 'bg-amber-50 text-amber-800 border-amber-200'
-                          }`}
+                            : log.status === 'LIMITED_DATA'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : 'bg-rose-50 text-rose-800 border-rose-200'
+                        }`}
                       >
                         {log.status}
                       </span>
@@ -360,11 +363,13 @@ export default function AuditTrailPage() {
                     Report Details — {selectedReportModal.reportId}
                   </h3>
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${selectedReportModal.status === 'SUCCESS' ||
-                        selectedReportModal.status === 'LIMITED_DATA'
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      selectedReportModal.status === 'SUCCESS' || selectedReportModal.status === 'SUFFICIENT_DATA'
                         ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                        : 'bg-amber-50 text-amber-800 border-amber-200'
-                      }`}
+                        : selectedReportModal.status === 'LIMITED_DATA'
+                        ? 'bg-amber-50 text-amber-800 border-amber-200'
+                        : 'bg-rose-50 text-rose-800 border-rose-200'
+                    }`}
                   >
                     {selectedReportModal.status}
                   </span>
