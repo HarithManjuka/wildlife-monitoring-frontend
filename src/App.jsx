@@ -3,6 +3,7 @@ import { AuthProvider, AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
 import Login from './pages/Login';
 import ConflictsDashboard from './pages/ConflictsDashboard';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SystemOverview from './components/SystemOverview';
 
@@ -37,22 +38,22 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={user ? <Navigate to={getIndexRoute()} replace /> : <Login />} />
-      
+
       <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
         {/* Operations Overview & Health Diagnostics (Original flow preserved) */}
         <Route path="/dashboard" element={<SystemOverview />} />
-        
+
         {/* UC-01 */}
         <Route path="/patrol" element={<TempPage title="Active Patrol Map (M.U. Handaragama)" />} />
-        
+
         {/* UC-02 */}
         <Route path="/alerts" element={<TempPage title="Sensor Alerts & Geofences (K.M.S.G.S.C. Karunanayake)" />} />
-        
+
         {/* UC-03 - Your Page */}
         <Route path="/conflicts" element={<ConflictsDashboard />} />
-        
-        {/* UC-04 */}
-        <Route path="/analytics" element={<TempPage title="Conservation Analytics Dashboard (J.R.I.C.S. Jayakody)" />} />
+
+        {/* Conservation Analytics */}
+        <Route path="/analytics" element={<AnalyticsDashboard />} />
       </Route>
 
       {/* Fallback route */}
