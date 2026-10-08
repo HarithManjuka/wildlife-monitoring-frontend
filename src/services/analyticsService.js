@@ -1,11 +1,3 @@
-/**
- * analyticsService.js — Frontend Data Service (UC-04)
- * Author: J.R.I.C.S. Jayakody (Park Manager — Analytics & Queue)
- *
- * Communicates with backend analytics endpoints.
- * Adheres to Dependency Inversion: uses centralized api instance with auto-auth and proxy.
- */
-
 import api from '../utils/api';
 
 /**
@@ -18,7 +10,7 @@ export async function getFilterOptions() {
 
 /**
  * Validates report criteria (date range and report type)
- * Handles Exception Flow E3: Invalid Date Range
+ * Handles Exception: Invalid Date Range
  */
 export async function validateFilters(criteria) {
   // Client-side quick check
@@ -48,7 +40,7 @@ export async function fetchReport(criteria) {
 }
 
 /**
- * Exports report in requested format with CSV fallback support (E2)
+ * Exports report in requested format with CSV fallback support
  */
 export async function exportReport(payload, format = 'CSV', simulateError = false) {
   const { data } = await api.post('/analytics/export', { payload, format, simulateError });
@@ -87,11 +79,11 @@ export async function fetchCommunityQueue(filters = {}) {
 }
 
 /**
- * Fetch audit logs (Postcondition 3)
+ * Fetch audit logs 
  */
-export async function fetchAuditLogs() {
+export async function fetchAuditLogs(limit = 100) {
   try {
-    const { data } = await api.get('/analytics/audit-logs');
+    const { data } = await api.get('/analytics/audit-logs', { params: { limit } });
     return data.logs || [];
   } catch {
     return [];

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Shield, Map, AlertTriangle, Users, BarChart3, LogOut } from 'lucide-react';
+import { Shield, Map, AlertTriangle, Users, BarChart3, LogOut, FileText, MapPin } from 'lucide-react';
 import dashboardLogo from '../assets/dashboard_logo.png';
 
 export default function DashboardLayout() {
@@ -19,8 +19,11 @@ export default function DashboardLayout() {
     { name: 'Dashboard', path: '/dashboard', icon: Shield, roles: ['LIAISON_OFFICER', 'PARK_MANAGER', 'SENSOR_DISPATCHER'] },
     { name: 'Field Patrol', path: '/patrol', icon: Map, roles: ['RANGER'] },
     { name: 'Sensor Alerts', path: '/alerts', icon: AlertTriangle, roles: ['RANGER', 'SENSOR_DISPATCHER'] },
-    { name: 'Community Reports', path: '/conflicts', icon: Users, roles: ['LIAISON_OFFICER', 'PARK_MANAGER'] },
+    { name: 'Community Reports', path: '/conflicts', icon: Users, roles: ['LIAISON_OFFICER'] },
     { name: 'Analytics', path: '/analytics', icon: BarChart3, roles: ['PARK_MANAGER'] },
+    { name: 'Patrol Coverage', path: '/patrol-coverage', icon: MapPin, roles: ['PARK_MANAGER'] },
+    { name: 'Community Queue', path: '/community-queue', icon: Users, roles: ['PARK_MANAGER'] },
+    { name: 'Audit Trail', path: '/audit-trail', icon: FileText, roles: ['PARK_MANAGER'] },
   ];
 
   // Filter items for the logged-in user
