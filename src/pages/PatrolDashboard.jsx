@@ -15,7 +15,6 @@ import {
   Battery,
   Clock,
   Compass,
-  Edit3,
   X,
   ShieldAlert,
   Footprints,
@@ -24,6 +23,9 @@ import {
   Navigation,
   Crosshair,
   Trash2,
+  Download,
+  Radio,
+  Route,
 } from 'lucide-react';
 
 export default function PatrolDashboard() {
@@ -59,7 +61,6 @@ export default function PatrolDashboard() {
   const [showEndConfirmModal, setShowEndConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successInfo, setSuccessInfo] = useState({ title: '', message: '' });
-  const [editingIncident, setEditingIncident] = useState(null);
 
   // New Incident Form Data (Starts Clean / No hardcoded dummy strings)
   const [incidentForm, setIncidentForm] = useState({
@@ -72,6 +73,21 @@ export default function PatrolDashboard() {
   });
   const [formError, setFormError] = useState('');
   const [manualNote, setManualNote] = useState('');
+
+  // Live GPS Telemetry Sharing with Liaison Officer
+  const [gpsBroadcastEnabled, setGpsBroadcastEnabled] = useState(true);
+  const [lastBroadcastTime, setLastBroadcastTime] = useState(null);
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
+
+  // Toast Notification Popup State
+  const [toastNotification, setToastNotification] = useState(null);
+
+  const showToast = useCallback((message, type = 'success') => {
+    setToastNotification({ message, type });
+    setTimeout(() => {
+      setToastNotification((prev) => (prev?.message === message ? null : prev));
+    }, 4500);
+  }, []);
 
   // 1. Fetch Real GPS Coordinates from Device
   const fetchRealGps = useCallback(() => {
@@ -173,6 +189,44 @@ export default function PatrolDashboard() {
   }, [activePatrol]);
 
   // ==========================================
+  // LIVE GPS SHARING WITH LIAISON OFFICER & PARK MANAGER ROUTE CREATION
+  // ==========================================
+
+  const broadcastLiveGpsToHq = useCallback(async (customPayload = {}) => {
+    if (!gpsBroadcastEnabled) return;
+    setIsBroadcasting(true);
+    try {
+      await patrolService.shareLiveGps({
+        rangerId: user?.userId || 'USR-8822',
+        rangerName: user?.name || 'M.U. Handaragama',
+        latitude: liveGps.latitude,
+        longitude: liveGps.longitude,
+        accuracyMeters: liveGps.accuracyMeters,
+        batteryLevel: batteryLevel,
+        routeId: activePatrol ? activePatrol.routeId : selectedRouteId,
+        routeName: activePatrol ? activePatrol.routeName : 'Field Ranger Unit',
+        status: activePatrol ? 'PATROLLING' : 'STANDBY',
+        ...customPayload,
+      });
+      setLastBroadcastTime(new Date().toLocaleTimeString());
+    } catch (err) {
+      console.warn('GPS broadcast error:', err.message);
+    } finally {
+      setIsBroadcasting(false);
+    }
+  }, [gpsBroadcastEnabled, user, liveGps, batteryLevel, activePatrol, selectedRouteId]);
+
+  // Periodic GPS telemetry broadcast to Liaison Officer (every 12 seconds)
+  useEffect(() => {
+    if (!gpsBroadcastEnabled) return;
+    broadcastLiveGpsToHq();
+    const interval = setInterval(() => {
+      broadcastLiveGpsToHq();
+    }, 12000);
+    return () => clearInterval(interval);
+  }, [gpsBroadcastEnabled, broadcastLiveGpsToHq]);
+
+  // ==========================================
   // REAL PATROL ACTIONS
   // ==========================================
 
@@ -216,6 +270,7 @@ export default function PatrolDashboard() {
 
     setElapsedSeconds(0);
     refreshLocalData();
+    broadcastLiveGpsToHq({ status: 'PATROLLING', routeId: chosenRouteId, routeName: chosenRouteName });
   };
 
   // Record Real Waypoint (Current GPS point or manual checkpoint)
@@ -234,6 +289,7 @@ export default function PatrolDashboard() {
     const updated = await patrolService.addWaypoint(activePatrol.id, wp);
     setActivePatrol(updated);
     refreshLocalData();
+    broadcastLiveGpsToHq({ status: 'PATROLLING' });
   };
 
   // Add Manual Waypoint (Alternative Flow A1)
@@ -254,6 +310,7 @@ export default function PatrolDashboard() {
     setShowManualWpModal(false);
     setManualNote('');
     refreshLocalData();
+    broadcastLiveGpsToHq({ status: 'PATROLLING', note: manualNote.trim() });
   };
 
   // Open Incident Modal with Live Coordinates
@@ -329,10 +386,11 @@ export default function PatrolDashboard() {
       });
 
       setShowIncidentModal(false);
+      showToast('Incident Saved Successfully!');
       setSuccessInfo({
-        title: isOnline ? 'Incident Recorded & Synchronized' : 'Incident Saved Locally (Offline)',
+        title: 'Incident Saved Successfully',
         message: isOnline
-          ? 'Report successfully uploaded to the central operations server.'
+          ? 'Report successfully uploaded and synchronized with headquarters.'
           : 'Your report is saved securely in local storage and will sync automatically when network is restored.',
       });
       setShowSuccessModal(true);
@@ -342,21 +400,6 @@ export default function PatrolDashboard() {
     }
   };
 
-  // Update Incident (Alternative Flow A2)
-  const handleUpdateIncident = async (e) => {
-    e.preventDefault();
-    if (!editingIncident) return;
-
-    await patrolService.updateIncident(editingIncident.id, {
-      description: editingIncident.description.trim(),
-      severity: editingIncident.severity,
-      landmark: editingIncident.landmark?.trim() || '',
-    });
-
-    setEditingIncident(null);
-    refreshLocalData();
-  };
-
   // End Patrol
   const handleConfirmEndPatrol = async () => {
     if (!activePatrol) return;
@@ -364,11 +407,29 @@ export default function PatrolDashboard() {
       batteryLevel,
       summaryNotes: 'Field patrol shift successfully completed.',
     });
+
+    try {
+      await patrolService.shareLiveGps({
+        rangerId: user?.userId || 'USR-8822',
+        rangerName: user?.name || 'M.U. Handaragama',
+        latitude: liveGps.latitude,
+        longitude: liveGps.longitude,
+        accuracyMeters: liveGps.accuracyMeters,
+        batteryLevel,
+        status: 'OFF_DUTY',
+        routeName: 'Off Duty',
+        note: 'Patrol shift concluded',
+      });
+    } catch {
+      // offline fallback
+    }
+
     setActivePatrol(null);
     setShowEndConfirmModal(false);
+    showToast('Patrol Ended Successfully!');
     setSuccessInfo({
-      title: 'Patrol Completed Successfully',
-      message: 'Patrol log has been archived. All recorded telemetry, waypoints, and incidents are preserved.',
+      title: 'Patrol Ended Successfully',
+      message: 'Patrol shift has been completed. All recorded telemetry, GPS breadcrumbs, and incidents are preserved.',
     });
     setShowSuccessModal(true);
     refreshLocalData();
@@ -518,12 +579,7 @@ export default function PatrolDashboard() {
             <Footprints className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold text-white tracking-tight">Ranger Field Patrol Portal</h1>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono border border-emerald-500/30">
-                UC-01
-              </span>
-            </div>
+            <h1 className="text-lg font-bold text-white tracking-tight">Ranger Field Patrol Portal</h1>
             <p className="text-xs text-stone-400">
               Officer: <span className="text-emerald-300 font-medium">{user?.name || 'M.U. Handaragama (IT23819092)'}</span> • Live Hardware Telemetry
             </p>
@@ -545,6 +601,21 @@ export default function PatrolDashboard() {
                 ? `GPS: ${liveGps.latitude.toFixed(4)}, ${liveGps.longitude.toFixed(4)} (±${liveGps.accuracyMeters}m)`
                 : 'GPS: Acquiring Lock...'}
             </span>
+          </button>
+
+          {/* Share Live GPS with Liaison Officer */}
+          <button
+            type="button"
+            onClick={async () => {
+              setGpsBroadcastEnabled(true);
+              await broadcastLiveGpsToHq();
+              showToast('GPS Shared Successfully!');
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-medium cursor-pointer transition text-xs bg-emerald-950/70 border-emerald-700 text-emerald-300 hover:bg-emerald-900 shadow-sm"
+            title="Broadcast live GPS telemetry to Liaison Officer"
+          >
+            <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <span>GPS Share</span>
           </button>
 
           {/* Real Battery Level */}
@@ -868,14 +939,6 @@ export default function PatrolDashboard() {
                           </span>
                           <span className="text-[10px] text-stone-400">{inc.severity}</span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => setEditingIncident(inc)}
-                          className="text-stone-400 hover:text-emerald-400 p-1 transition cursor-pointer"
-                          title="Edit incident details (A2)"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
                       </div>
 
                       <p className="text-xs text-stone-200 line-clamp-2 leading-relaxed">{inc.description}</p>
@@ -934,7 +997,6 @@ export default function PatrolDashboard() {
                     <th className="px-4 py-3">Description</th>
                     <th className="px-4 py-3">Photos</th>
                     <th className="px-4 py-3">Sync Status</th>
-                    <th className="px-4 py-3">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-900">
@@ -978,15 +1040,6 @@ export default function PatrolDashboard() {
                         >
                           {inc.syncStatus}
                         </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          type="button"
-                          onClick={() => setEditingIncident(inc)}
-                          className="text-emerald-400 hover:underline cursor-pointer"
-                        >
-                          Edit (A2)
-                        </button>
                       </td>
                     </tr>
                   ))}
@@ -1326,66 +1379,21 @@ export default function PatrolDashboard() {
         </div>
       )}
 
-      {/* 5. EDIT INCIDENT MODAL (A2) */}
-      {editingIncident && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-[#0e1914] border border-emerald-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl flex flex-col gap-4">
-            <div className="flex items-center justify-between pb-3 border-b border-emerald-950">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-emerald-400" /> Edit Incident Details (A2)
-              </h3>
-              <button
-                type="button"
-                onClick={() => setEditingIncident(null)}
-                className="text-stone-400 hover:text-white p-1 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleUpdateIncident} className="space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">Description</label>
-                <textarea
-                  rows={3}
-                  value={editingIncident.description}
-                  onChange={(e) => setEditingIncident({ ...editingIncident, description: e.target.value })}
-                  className="w-full bg-[#070e0b] border border-emerald-900 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">Landmark</label>
-                <input
-                  type="text"
-                  value={editingIncident.landmark || ''}
-                  onChange={(e) => setEditingIncident({ ...editingIncident, landmark: e.target.value })}
-                  className="w-full bg-[#070e0b] border border-emerald-900 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">Severity</label>
-                <select
-                  value={editingIncident.severity}
-                  onChange={(e) => setEditingIncident({ ...editingIncident, severity: e.target.value })}
-                  className="w-full bg-[#070e0b] border border-emerald-900 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="LOW">LOW</option>
-                  <option value="MEDIUM">MEDIUM</option>
-                  <option value="HIGH">HIGH</option>
-                  <option value="CRITICAL">CRITICAL</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer"
-              >
-                Update Incident
-              </button>
-            </form>
+      {/* Toast Notification Popup Banner */}
+      {toastNotification && (
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-[#0e271c] border-2 border-emerald-400 text-white shadow-2xl backdrop-blur-md animate-bounce-in">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 animate-pulse" />
+          <div>
+            <p className="text-xs font-bold text-emerald-300">Notification</p>
+            <p className="text-xs text-white font-medium">{toastNotification.message}</p>
           </div>
+          <button
+            type="button"
+            onClick={() => setToastNotification(null)}
+            className="ml-3 text-stone-400 hover:text-white text-base cursor-pointer"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

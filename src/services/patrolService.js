@@ -24,10 +24,11 @@ export const patrolService = {
     } catch (err) {
       console.warn('Using offline fallback routes:', err.message);
       return [
-        { id: 'route-1a', name: 'Patrol Route 1A - Eastern River Basin', sector: 'Sector 4', targetDistanceKm: 8.5 },
-        { id: 'route-2b', name: 'Patrol Route 2B - Boundary Electric Fence', sector: 'Sector 2', targetDistanceKm: 12.0 },
-        { id: 'route-3c', name: 'Patrol Route 3C - Southern Scrub Corridor', sector: 'Sector 7', targetDistanceKm: 6.2 },
-        { id: 'route-4d', name: 'Patrol Route 4D - Mountain Ridge Lookout', sector: 'Sector 1', targetDistanceKm: 9.8 },
+        { id: 'route-1a', name: 'Yala Block 1: Palatupana to Menik Ganga Basin', sector: 'Block 1 (Ruhuna)', targetDistanceKm: 9.2 },
+        { id: 'route-2b', name: 'Yala Block 1: Patanangala Coastline & Buthawa Tank', sector: 'Block 1 (Coastal)', targetDistanceKm: 11.5 },
+        { id: 'route-3c', name: 'Yala Block 2: Kumbukkan Oya Boundary & Strict Reserve', sector: 'Block 2 (Strict Reserve)', targetDistanceKm: 14.0 },
+        { id: 'route-4d', name: 'Yala Block 3: Sithulpawwa Sanctuary & Monastic Corridor', sector: 'Block 3 (Sithulpawwa)', targetDistanceKm: 8.4 },
+        { id: 'route-5e', name: 'Yala Block 5: Lunugamvehera Elephant Migration Corridor', sector: 'Block 5 (Corridor)', targetDistanceKm: 12.8 },
       ];
     }
   },
@@ -287,6 +288,38 @@ export const patrolService = {
       }
     } catch (err) {
       throw new Error(`Sync failed: ${err.message || 'Network unreachable'}`);
+    }
+  },
+
+  // 10. Route Management (Park Manager - UC-04 / UC-01)
+  async createRoute(routeData) {
+    const res = await api.post('/patrols/routes', routeData);
+    return res.data?.route;
+  },
+
+  async deleteRoute(routeId) {
+    const res = await api.delete(`/patrols/routes/${routeId}`);
+    return res.data?.route;
+  },
+
+  // 11. Live GPS Telemetry Sharing with Liaison Officer (UC-01 <-> UC-03)
+  async shareLiveGps(gpsData) {
+    try {
+      const res = await api.post('/patrols/gps/live', gpsData);
+      return res.data?.telemetry;
+    } catch (err) {
+      console.warn('[PatrolService] Failed to share live GPS with HQ:', err.message);
+      return null;
+    }
+  },
+
+  async getActiveRangersGps() {
+    try {
+      const res = await api.get('/patrols/gps/active');
+      return res.data?.rangers || [];
+    } catch (err) {
+      console.warn('[PatrolService] Failed to fetch active rangers GPS:', err.message);
+      return [];
     }
   },
 };

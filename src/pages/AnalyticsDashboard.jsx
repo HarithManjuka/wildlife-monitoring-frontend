@@ -8,6 +8,7 @@ import IncidentTypeChart from '../components/analytics/IncidentTypeChart';
 import HotspotHeatmap from '../components/analytics/HotspotHeatmap';
 import PatrolCoveragePanel from '../components/analytics/PatrolCoveragePanel';
 import CommunityQueuePanel from '../components/analytics/CommunityQueuePanel';
+import PatrolRoutesManager from '../components/analytics/PatrolRoutesManager';
 import ExportBar from '../components/analytics/ExportBar';
 
 import {
@@ -109,12 +110,13 @@ export default function AnalyticsDashboard() {
           {[
             { key: 'overview', label: 'Analytics' },
             { key: 'queue', label: `Queue${queue.length ? ` (${queue.length})` : ''}` },
+            { key: 'routes', label: 'Patrol Routes' },
           ].map((tab) => (
             <button
               key={tab.key}
               id={`tab-${tab.key}`}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition ${activeTab === tab.key
+              className={`px-4 py-2 rounded-lg text-xs font-semibold transition cursor-pointer ${activeTab === tab.key
                 ? 'bg-emerald-700 text-white'
                 : 'text-stone-400 hover:text-stone-200'
                 }`}
@@ -191,6 +193,15 @@ export default function AnalyticsDashboard() {
           <span className="text-xs text-stone-500">{queue.length} reports · Source: UC-03 (A.M.H.M. Abeykoon)</span>
         }>
           <CommunityQueuePanel reports={queue} loading={queueLoading} />
+        </Section>
+      )}
+
+      {/* PATROL ROUTES TAB (Park Manager) */}
+      {activeTab === 'routes' && (
+        <Section title="Park Patrol Sectors & Routes" action={
+          <span className="text-xs text-stone-500">Dynamic Conservation Route Network</span>
+        }>
+          <PatrolRoutesManager />
         </Section>
       )}
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useMemo, useRef } from 'react';
 import {
   AlertTriangle,
   Send,
@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../utils/api';
+import { patrolService } from '../services/patrolService';
 import ConflictQueue from '../components/ConflictQueue';
 
 // Sector coordinate anchor positions for the Map View (Sri Lanka wildlife corridors)
@@ -42,6 +43,11 @@ export default function ConflictsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastRefreshed, setLastRefreshed] = useState(null);
+
+  // Active Field Rangers GPS Telemetry
+  const [activeRangers, setActiveRangers] = useState([]);
+  const [officerNotification, setOfficerNotification] = useState(null);
+  const prevGpsStampRef = useRef('');
 
   // Ranger Assignment form state
   const [rangerInput, setRangerInput] = useState('Ranger Unit Alpha');
@@ -120,6 +126,38 @@ export default function ConflictsDashboard() {
       active = false;
     };
   }, []);
+
+  // Poll Active Field Rangers GPS Telemetry (every 8 seconds)
+  const fetchActiveRangers = useCallback(async () => {
+    try {
+      const rangers = await patrolService.getActiveRangersGps();
+      setActiveRangers(rangers || []);
+
+      if (rangers && rangers.length > 0) {
+        const topRanger = rangers[0];
+        const stamp = `${topRanger.rangerId}-${topRanger.latitude}-${topRanger.longitude}-${topRanger.batteryLevel}`;
+        if (prevGpsStampRef.current !== stamp) {
+          prevGpsStampRef.current = stamp;
+          setOfficerNotification({
+            id: Date.now(),
+            rangerName: topRanger.rangerName,
+            coords: `${topRanger.latitude.toFixed(4)}° N, ${topRanger.longitude.toFixed(4)}° E`,
+            routeName: topRanger.routeName || 'Field Patrol Sector',
+            battery: topRanger.batteryLevel || 100,
+            time: new Date().toLocaleTimeString(),
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch active rangers GPS telemetry:', err.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchActiveRangers();
+    const interval = setInterval(fetchActiveRangers, 8000);
+    return () => clearInterval(interval);
+  }, [fetchActiveRangers]);
 
   // Selected report computation
   const selectedReport = useMemo(() => {
@@ -378,6 +416,51 @@ export default function ConflictsDashboard() {
         </div>
       )}
 
+      {/* Live GPS Telemetry Notification for Liaison Officer */}
+      {officerNotification && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950 via-[#0d2619] to-stone-900 border-2 border-emerald-500 text-white text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-300 shrink-0">
+              <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-emerald-300 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  Live GPS Notification Received
+                </span>
+                <span className="text-[10px] text-stone-400 font-mono">[{officerNotification.time}]</span>
+              </div>
+              <p className="text-stone-200 mt-0.5">
+                Ranger <strong>{officerNotification.rangerName}</strong> is sharing live GPS coordinates:{' '}
+                <span className="font-mono text-emerald-300 font-semibold">{officerNotification.coords}</span> on <em>{officerNotification.routeName}</em> (Battery: {officerNotification.battery}%).
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            {canAssign && (
+              <button
+                type="button"
+                onClick={() => {
+                  setRangerInput(`${officerNotification.rangerName} (Live GPS)`);
+                }}
+                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer shadow-md"
+              >
+                Assign This Ranger
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setOfficerNotification(null)}
+              className="p-1.5 text-stone-400 hover:text-white cursor-pointer ml-1"
+              title="Dismiss notification"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 2. GROUP 001 HIGH-FIDELITY THREE-PANEL ARCHITECTURE */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* ======================================================== */}
@@ -540,6 +623,61 @@ export default function ConflictsDashboard() {
                   </span>
                 </div>
 
+                {/* Field Ranger Live GPS Telemetry Stream (UC-01 <-> UC-03) */}
+                <div className="p-3 rounded-xl bg-stone-900 border border-emerald-900/60 text-xs flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
+                      <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                      Live Ranger GPS Stream ({activeRangers.length} Online)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={fetchActiveRangers}
+                      className="text-[10px] text-stone-400 hover:text-emerald-300 flex items-center gap-1 transition cursor-pointer"
+                    >
+                      <RefreshCw className="w-3 h-3" /> Refresh
+                    </button>
+                  </div>
+
+                  {activeRangers.length === 0 ? (
+                    <div className="text-[10px] text-stone-400 italic">
+                      No field rangers transmitting live telemetry right now. Start a patrol shift in Field Patrol Portal to broadcast coordinates.
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      {activeRangers.map((r) => (
+                        <div
+                          key={r.rangerId}
+                          className="p-2 rounded-lg bg-emerald-950/40 border border-emerald-800/40 flex items-center justify-between gap-2"
+                        >
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                              <strong className="text-white text-xs">{r.rangerName}</strong>
+                              <span className="text-[10px] text-emerald-300 font-mono">({r.rangerId})</span>
+                            </div>
+                            <div className="text-[10px] text-stone-300 font-mono mt-0.5">
+                              📍 {r.latitude.toFixed(4)}° N, {r.longitude.toFixed(4)}° E · Bat: {r.batteryLevel}%
+                            </div>
+                            <div className="text-[10px] text-stone-400">
+                              Route: {r.routeName} ({r.status})
+                            </div>
+                          </div>
+                          {canAssign && (
+                            <button
+                              type="button"
+                              onClick={() => setRangerInput(`${r.rangerName} (Live GPS)`)}
+                              className="px-2 py-1 rounded bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-[10px] transition cursor-pointer shrink-0"
+                            >
+                              Dispatch Unit
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {selectedReport.dispatchedRanger ? (
                   <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 flex flex-col gap-1 text-xs">
                     <div className="flex items-center gap-1.5 font-bold text-emerald-900">
@@ -565,10 +703,21 @@ export default function ConflictsDashboard() {
                           onChange={(e) => setRangerInput(e.target.value)}
                           className="w-full px-2.5 py-1.5 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-emerald-700 focus:bg-white"
                         >
-                          <option value="Ranger Unit Alpha">Ranger Unit Alpha (Habarana Base)</option>
-                          <option value="Ranger Unit Bravo">Ranger Unit Bravo (Minneriya Patrol)</option>
-                          <option value="Ranger Unit Charlie">Ranger Unit Charlie (Sigiriya Quick Response)</option>
-                          <option value="Rapid Response Unit 04">Rapid Response Unit 04</option>
+                          {activeRangers.length > 0 && (
+                            <optgroup label="📡 Active Field Rangers (Live GPS Streaming)">
+                              {activeRangers.map((r) => (
+                                <option key={r.rangerId} value={`${r.rangerName} (Live GPS)`}>
+                                  📍 {r.rangerName} [GPS: {r.latitude.toFixed(4)}, {r.longitude.toFixed(4)}] - {r.routeName}
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
+                          <optgroup label="Base Patrol Units">
+                            <option value="Ranger Unit Alpha">Ranger Unit Alpha (Habarana Base)</option>
+                            <option value="Ranger Unit Bravo">Ranger Unit Bravo (Minneriya Patrol)</option>
+                            <option value="Ranger Unit Charlie">Ranger Unit Charlie (Sigiriya Quick Response)</option>
+                            <option value="Rapid Response Unit 04">Rapid Response Unit 04</option>
+                          </optgroup>
                         </select>
                       </div>
 
@@ -762,6 +911,44 @@ export default function ConflictsDashboard() {
                         )}
                       </div>
                       <div className="w-1.5 h-1.5 bg-stone-900 rotate-45 -mt-1" />
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Active Field Rangers Real GPS Live Telemetry Beacon Pins (UC-01 <-> UC-03) */}
+              {activeRangers.map((ranger) => {
+                const minLat = 7.7;
+                const maxLat = 8.6;
+                const minLng = 79.9;
+                const maxLng = 81.3;
+                const clampedLng = Math.max(minLng, Math.min(maxLng, ranger.longitude));
+                const clampedLat = Math.max(minLat, Math.min(maxLat, ranger.latitude));
+                const posX = Math.max(12, Math.min(88, ((clampedLng - minLng) / (maxLng - minLng)) * 100));
+                const posY = Math.max(12, Math.min(88, (1 - (clampedLat - minLat) / (maxLat - minLat)) * 100));
+
+                return (
+                  <div
+                    key={`ranger-${ranger.rangerId}`}
+                    style={{ left: `${posX}%`, top: `${posY}%` }}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-40 transition-transform hover:scale-125"
+                  >
+                    <span className="absolute -inset-2 rounded-full animate-ping opacity-80 bg-emerald-400" />
+                    <div className="relative w-7 h-7 rounded-full bg-emerald-600 border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold ring-2 ring-emerald-400">
+                      🧭
+                    </div>
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center pointer-events-none z-50 whitespace-nowrap">
+                      <div className="px-2.5 py-1.5 rounded-md bg-stone-900 text-white text-[10px] shadow-xl border border-emerald-500 flex flex-col items-center font-sans">
+                        <span className="font-bold text-emerald-400">Ranger: {ranger.rangerName}</span>
+                        <span className="text-stone-300 font-mono text-[9px]">
+                          {ranger.latitude.toFixed(4)}° N, {ranger.longitude.toFixed(4)}° E
+                        </span>
+                        <span className="text-stone-400 text-[9px] mt-0.5">
+                          Route: {ranger.routeName} · Bat: {ranger.batteryLevel}%
+                        </span>
+                      </div>
+                      <div className="w-1.5 h-1.5 bg-stone-900 rotate-45 -mt-1 border-r border-b border-emerald-500" />
                     </div>
                   </div>
                 );
