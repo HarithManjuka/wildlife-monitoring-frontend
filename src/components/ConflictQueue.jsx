@@ -349,12 +349,12 @@ export default function ConflictQueue({
             <div>
               <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
                 Community Conflict Triage Queue
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono font-medium">
-                  UC-03 Protected
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 font-medium border border-stone-200">
+                  Liaison Officer
                 </span>
               </h1>
               <p className="text-xs text-stone-500 mt-0.5">
-                A.M.H.M. Abeykoon (IT23831254) • Incident Triage & Ranger Dispatch
+                Incident Triage & Ranger Dispatch
               </p>
             </div>
           </div>

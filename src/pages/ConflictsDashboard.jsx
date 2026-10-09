@@ -289,15 +289,12 @@ export default function ConflictsDashboard() {
                 <h1 className="text-2xl font-bold text-stone-900 tracking-tight">
                   Community Conflict Operations Portal
                 </h1>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono font-semibold">
-                  UC-03 Live Triage
-                </span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-medium">
-                  Group 001 Hi-Fi
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 font-medium border border-stone-200">
+                  Liaison Officer
                 </span>
               </div>
               <p className="text-xs text-stone-500 mt-1">
-                A.M.H.M. Abeykoon (IT23831254) • Multi-Panel Incident Queue, Triage Console & Geospatial Map
+                Real-Time Incident Triage, Ranger Dispatch & Geospatial Conflict Tracking
               </p>
             </div>
           </div>
