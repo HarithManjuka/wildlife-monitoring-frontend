@@ -587,6 +587,15 @@ export default function AnalyticsDashboard() {
           </div>
         </div>
       )}
+
+      {/* PATROL ROUTES TAB (Park Manager) */}
+      {activeTab === 'routes' && (
+        <Section title="Park Patrol Sectors & Routes" action={
+          <span className="text-xs text-stone-500">Dynamic Conservation Route Network</span>
+        }>
+          <PatrolRoutesManager />
+        </Section>
+      )}
     </div>
   );
 }
