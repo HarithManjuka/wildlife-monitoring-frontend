@@ -2,7 +2,7 @@
 // SOLID Principle: SRP - Centralizes all API calls related to telemetry.
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:7050/api/telemetry';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:7050/api'}/telemetry`;
 
 const getLiveTelemetry = async () => {
   try {
