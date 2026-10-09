@@ -12,8 +12,6 @@ import {
   Search,
   X,
   ArrowUpRight,
-  RefreshCw,
-  SlidersHorizontal,
 } from 'lucide-react';
 
 import StatCard from '../components/analytics/StatCard';
@@ -22,6 +20,7 @@ import IncidentTrendChart from '../components/analytics/IncidentTrendChart';
 import IncidentTypeChart from '../components/analytics/IncidentTypeChart';
 import HotspotHeatmap from '../components/analytics/HotspotHeatmap';
 import ExportBar from '../components/analytics/ExportBar';
+import PatrolRoutesManager from '../components/analytics/PatrolRoutesManager';
 import { downloadAuditPdf, downloadAuditCsv } from '../utils/exporters/auditReportBuilder';
 
 import {
@@ -53,6 +52,7 @@ const SEVERITY_BADGE = {
 export default function AnalyticsDashboard() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const [activeTab, setActiveTab] = useState('analytics');
   const [summary, setSummary] = useState(null);
   const [report, setReport] = useState(null);
   const [queue, setQueue] = useState([]);
@@ -211,7 +211,30 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* Top Header Actions */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                activeTab === 'analytics'
+                  ? 'bg-white text-emerald-800 shadow-2xs'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              Analytics Reports
+            </button>
+            <button
+              onClick={() => setActiveTab('routes')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                activeTab === 'routes'
+                  ? 'bg-white text-emerald-800 shadow-2xs'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              Patrol Routes
+            </button>
+          </div>
+
           <button
             onClick={() => setShowLoggedReportsModal(true)}
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 hover:text-stone-900 text-xs font-semibold cursor-pointer transition shadow-2xs"
@@ -230,7 +253,8 @@ export default function AnalyticsDashboard() {
       )}
 
       {/* OVERVIEW ANALYTICS WORKSPACE */}
-      <>
+      {activeTab === 'analytics' && (
+        <>
         {/* Stat Cards (Telemetry summary) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map((card) => (
@@ -395,6 +419,7 @@ export default function AnalyticsDashboard() {
           <ExportBar report={report} />
         </div>
       </>
+      )}
 
       {/* Incident Detail Modal */}
       {selectedIncidentModal && (

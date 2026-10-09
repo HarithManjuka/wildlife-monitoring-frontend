@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import { useContext } from 'react';
+import { Component, useContext } from 'react';
 import Login from './pages/Login';
 import ConflictsDashboard from './pages/ConflictsDashboard';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
@@ -11,6 +11,44 @@ import PatrolDashboard from './pages/PatrolDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SystemOverview from './components/SystemOverview';
 import LiveTelemetryDashboard from './pages/LiveTelemetryDashboard'; // [IT23818620 - K.M.S.G.S.C. Karunanayake] - UC-02A
+
+// Error Boundary to prevent full-screen blanking on render exceptions
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('[UI Runtime Error]', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-stone-900 text-stone-100 flex items-center justify-center p-6 font-sans">
+          <div className="max-w-md w-full bg-stone-800 border border-stone-700 rounded-2xl p-6 shadow-xl space-y-4">
+            <h2 className="text-base font-bold text-rose-400">View Rendering Error</h2>
+            <p className="text-xs text-stone-300">
+              {this.state.error?.message || 'An unexpected rendering error occurred.'}
+            </p>
+            <button
+              onClick={() => {
+                this.setState({ hasError: false, error: null });
+                window.location.reload();
+              }}
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 rounded-xl text-xs font-semibold text-white transition cursor-pointer"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // Mock empty pages for the other team members to build out
 const TempPage = ({ title }) => (
@@ -72,10 +110,12 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
