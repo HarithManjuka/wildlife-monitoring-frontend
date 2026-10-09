@@ -10,6 +10,7 @@ import AuditTrailPage from './pages/AuditTrailPage';
 import PatrolDashboard from './pages/PatrolDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SystemOverview from './components/SystemOverview';
+import LiveTelemetryDashboard from './pages/LiveTelemetryDashboard'; // [IT23818620 - K.M.S.G.S.C. Karunanayake] - UC-02A
 
 // Mock empty pages for the other team members to build out
 const TempPage = ({ title }) => (
@@ -50,8 +51,8 @@ function AppRoutes() {
         {/* UC-01: Field Patrols & Incidents (M.U. Handaragama) */}
         <Route path="/patrol" element={<PatrolDashboard />} />
 
-        {/* UC-02 */}
-        <Route path="/alerts" element={<TempPage title="Sensor Alerts & Geofences (K.M.S.G.S.C. Karunanayake)" />} />
+        {/* UC-02A: Monitor Live Animal Telemetry */}
+        <Route path="/alerts" element={<LiveTelemetryDashboard />} />
 
         {/* UC-03 - Your Page */}
         <Route path="/conflicts" element={<ConflictsDashboard />} />
