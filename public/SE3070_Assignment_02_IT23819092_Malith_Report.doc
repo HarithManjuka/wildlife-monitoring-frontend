@@ -1,0 +1,506 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>SE3070 Assignment 02 - IT23819092 - M.U. Handaragama</title>
+<!--[if gte mso 9]>
+<xml>
+ <w:WordDocument>
+  <w:View>Print</w:View>
+  <w:Zoom>100</w:Zoom>
+  <w:DoNotOptimizeForBrowser/>
+ </w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page Section1 {
+    size: 8.27in 11.69in;
+    margin: 1.0in 1.0in 1.0in 1.0in;
+    mso-header-margin: 0.5in;
+    mso-footer-margin: 0.5in;
+    mso-paper-source: 0;
+}
+div.Section1 { page: Section1; }
+body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    line-height: 1.35;
+    color: #000000;
+    background-color: #ffffff;
+}
+p {
+    margin-top: 4pt;
+    margin-bottom: 6pt;
+}
+h1 {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 18pt;
+    font-weight: bold;
+    color: #0f172a;
+    text-align: center;
+    margin-top: 10pt;
+    margin-bottom: 4pt;
+}
+h2 {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 14pt;
+    font-weight: bold;
+    color: #1e293b;
+    text-align: center;
+    margin-top: 2pt;
+    margin-bottom: 18pt;
+}
+h3 {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 13pt;
+    font-weight: bold;
+    color: #0f172a;
+    margin-top: 18pt;
+    margin-bottom: 6pt;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 3pt;
+}
+h4 {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 11.5pt;
+    font-weight: bold;
+    color: #1e293b;
+    margin-top: 12pt;
+    margin-bottom: 4pt;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 8pt;
+    margin-bottom: 14pt;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 10pt;
+}
+th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: bold;
+    text-align: left;
+    padding: 7pt 9pt;
+    border: 1px solid #334155;
+    font-size: 10pt;
+}
+td {
+    padding: 6pt 9pt;
+    border: 1px solid #64748b;
+    font-size: 9.5pt;
+    vertical-align: top;
+    line-height: 1.3;
+}
+tr:nth-child(even) td {
+    background-color: #f8fafc;
+}
+ul, ol {
+    margin-top: 3pt;
+    margin-bottom: 6pt;
+    padding-left: 20pt;
+}
+li {
+    margin-bottom: 3pt;
+}
+.diagram-box {
+    border: 1px dashed #94a3b8;
+    background-color: #f8fafc;
+    padding: 12pt;
+    margin-top: 8pt;
+    margin-bottom: 12pt;
+    text-align: center;
+    border-radius: 4px;
+}
+.code-inline {
+    font-family: 'Courier New', monospace;
+    font-size: 9pt;
+    background-color: #f1f5f9;
+    padding: 1pt 3pt;
+    border: 1px solid #e2e8f0;
+}
+.meta-box {
+    border: 1px solid #94a3b8;
+    background-color: #f8fafc;
+    padding: 10pt 14pt;
+    margin-bottom: 18pt;
+    font-size: 10pt;
+}
+</style>
+</head>
+<body>
+<div class="Section1">
+
+<!-- Student Meta Header -->
+<div class="meta-box">
+    <strong>Module:</strong> SE3070 – Case Studies in Software Engineering (Assignment 02)<br>
+    <strong>Student Registration Number:</strong> IT23819092<br>
+    <strong>Student Name:</strong> M.U. Handaragama (Malith)<br>
+    <strong>Assigned Substantial Use Case:</strong> Manage Field Patrol and Report Incidents<br>
+    <strong>Original Design Evaluated (from Assignment 1):</strong> E.A.D.T.M. Edirisinghe (IT23811522) – Group_001
+</div>
+
+<h1>IT23819092</h1>
+<h2>Manage Field Patrol and Report Incidents</h2>
+
+<!-- Original Use Case Scenario -->
+<h3>Use case scenario</h3>
+
+<table>
+    <tr>
+        <th style="width: 25%;">Field</th>
+        <th style="width: 75%;">Details</th>
+    </tr>
+    <tr>
+        <td><strong>Use Case</strong></td>
+        <td>Manage Field Patrol and Report Incidents</td>
+    </tr>
+    <tr>
+        <td><strong>Actor</strong></td>
+        <td>Ranger</td>
+    </tr>
+    <tr>
+        <td><strong>Supporting Actors</strong></td>
+        <td>Central System (The mobile application and its backend services)</td>
+    </tr>
+    <tr>
+        <td><strong>Preconditions</strong></td>
+        <td>
+            • The Ranger has successfully authenticated into the mobile application.<br>
+            • The Ranger's device has an active GPS signal and sufficient battery life (&gt;20%).<br>
+            • A patrol route has been assigned to the Ranger and is available for selection within the application.
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Postcondition</strong></td>
+        <td>
+            • <strong>Success:</strong> A complete patrol log (with route waypoints, start/end times) and all associated incident reports are saved to local storage. If a network connection was available, this data is successfully synchronized to the central server, and the patrol is marked as "Completed."<br>
+            • <strong>Failure/Interruption:</strong> Any patrol data and incidents captured up to the point of failure are preserved in local storage, marked as "Incomplete" or "Pending Sync," for later resumption or synchronization.
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Main Flow</strong></td>
+        <td>
+            1. The Ranger launches the application and navigates to the "My Patrols" screen.<br>
+            2. The Ranger selects the assigned patrol for the day from a list and taps the "Start Patrol" button.<br>
+            3. The System starts a new patrol session, records the start time, and begins automatically tracking the Ranger's route by saving GPS waypoints to local storage every five minutes.<br>
+            4. While on patrol, the Ranger discovers an illegal snare.<br>
+            5. The Ranger taps the floating <strong>"Log New Incident"</strong> button on the active patrol map screen.<br>
+            6. The System opens the "New Incident Report" form. It auto captures and populates the current GPS coordinates and timestamp.<br>
+            7. The Ranger selects "Snare" from the pre-defined Incident Type dropdown list.<br>
+            8. The Ranger activates the in-app camera, takes two photos of the snare from different angles, and confirms their attachment.<br>
+            9. The Ranger enters a short, descriptive text: "Single wire snare found on the eastern trail, near the old riverbed. Snare was dismantled."<br>
+            10. The Ranger taps the "Save Incident" button.<br>
+            11. The System validates that all mandatory fields (Incident Type, Location) are complete.<br>
+            12. The System saves the complete incident record, including all photos and data, to the device's local database.<br>
+            13. The System displays a confirmation message, "Incident Saved Locally," and returns the Ranger to the patrol map.<br>
+            14. After completing the patrol route, the Ranger navigates to the patrol screen and taps "End Patrol." The system prompts for confirmation.<br>
+            15. The Ranger confirms. The System stops GPS tracking and saves the completed patrol log locally, marking its status as "Pending Sync."<br>
+            16. The device establishes a stable network connection upon the Ranger's return to the station.<br>
+            17. The System's background sync service automatically detects the connection and begins uploading the queued patrol log and the saved incident report to the central server.<br>
+            18. The System receives a success acknowledgement from the server and updates the status of the local records to "Synced."
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Alternative Flow</strong></td>
+        <td>
+            <strong>1a. Ranger Manually Adds a Waypoint:</strong> At any point during step 4, the Ranger identifies a point of interest (e.g., a damaged fence) that is not a formal incident. The Ranger taps "Add Manual Waypoint" on the patrol map. The System immediately saves the current GPS coordinates and timestamp as a manually added point in the patrol log. The flow resumes.<br><br>
+            <strong>2a. Ranger Edits a Locally Saved Incident:</strong> After step 13, the Ranger realizes they need to add more detail to the description. From the patrol screen, the Ranger accesses the list of "Incidents for this Patrol." They select the "Snare" incident they just created and tap "Edit." The Ranger updates the description text and taps "Update Incident." The changes are saved to the local record. The flow resumes.
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Exception Flows</strong></td>
+        <td>
+            <strong>E1. No Network Connectivity During Save:</strong> At step 13, the System checks for network connectivity and finds none is available. The System saves the incident to a dedicated SyncQueue with the status "Pending Sync." The System displays a confirmation "Incident Saved Offline" and returns the Ranger to the patrol map. The background sync service will automatically handle the upload later.<br><br>
+            <strong>E2. GPS Signal Lost During Patrol:</strong> At step 3, the System detects the GPS signal is unavailable for over a minute. The System displays a persistent on-screen warning: "GPS Signal Lost. Route tracking paused." When the Ranger attempts to log an incident (step 6), the System cannot auto-populate the location and prompts the Ranger to pin the location manually on an offline map.<br><br>
+            <strong>E3. Mandatory Field is Missing on Save:</strong> At step 10, the Ranger taps "Save Incident" but has forgotten to select an Incident Type. The System's validation fails (step 11). The System prevents saving and displays an error message, "Incident Type is required," highlighting the empty field. The Ranger must correct the error to proceed.<br><br>
+            <strong>E4. Device Storage is Full:</strong> At step 8, when the Ranger attempts to attach a photo, the System detects insufficient local storage space. The System displays a critical alert: "Storage Full. Cannot save photo." The System allows the Ranger to save the incident report without the photo or provides an option to discard the attempt.
+        </td>
+    </tr>
+</table>
+
+<!-- Selected Use Case Rationale -->
+<h3>Selected Use Case</h3>
+
+<p><strong>• Name the use case:</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;o Manage Field Patrol and Report Incidents</p>
+
+<p><strong>• Explain why you selected it:</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;o I selected the "Manage Field Patrol and Report Incidents" use case because it represents the core, frontline operational module of the Smart Wildlife Conservation and Anti-Poaching System. Field rangers operate in remote, high-risk national parks (such as Yala and Udawalawe) with zero network connectivity and active threats from armed poachers.<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;o This use case bridges several complex engineering challenges: <strong>local-first offline data persistence</strong>, <strong>autonomous GPS geospatial tracking</strong>, <strong>hardware sensor integration (device battery, camera)</strong>, and <strong>mission-critical exception handling</strong>. Demonstrating how a field operator can reliably document spatial evidence (such as wire snares and poaching tracks) without data loss, and subsequently batch-synchronize with the central operations dashboard upon returning to base, provides substantial technical depth, rigorous UML modeling opportunities, and strong alignment with software engineering best practices.</p>
+
+<!-- Critique of the Original Scenario -->
+<h3>Critique of the Original Scenario</h3>
+
+<table>
+    <tr>
+        <th style="width: 25%;">Aspect</th>
+        <th style="width: 35%;">Observation / Issue</th>
+        <th style="width: 40%;">Impact on Design and Case Study Alignment</th>
+    </tr>
+    <tr>
+        <td><strong>Functional Coverage</strong></td>
+        <td>The original design covers basic tracking and incident logging, but omits <strong>threat severity classification</strong> (Low/Medium/High/Critical) and <strong>field ranger safety mechanisms (SOS / Duress alert)</strong>.</td>
+        <td>Incomplete real-world domain coverage; fails to prioritize poaching threats for tactical response teams and park analytics.</td>
+    </tr>
+    <tr>
+        <td><strong>Interaction Design</strong></td>
+        <td>Single-tap patrol termination ("End Patrol" at step 14) without an HCI confirmation dialog or distance summary.</td>
+        <td>Violates <strong>Nielsen's Heuristic #5 (Error Prevention)</strong>. In rugged field conditions with wet screens or gloves, accidental taps cause premature patrol termination.</td>
+    </tr>
+    <tr>
+        <td><strong>Preconditions &amp; Postconditions</strong></td>
+        <td>Precondition requires battery &gt;20%, but no degradation flow exists if battery drops below 10% during an 8-hour patrol.</td>
+        <td>Risk of sudden device shutdown and corrupted, unfinalized logs in deep forest reserves.</td>
+    </tr>
+    <tr>
+        <td><strong>Logical Flow</strong></td>
+        <td>Step 13 and Exception E1 split into saving directly to the server when online vs. saving to a SyncQueue when offline.</td>
+        <td>Violates the <strong>Local-First Architecture</strong> pattern. Network flickering during transmission causes split-brain data states and lost records. All operations must write to local storage first.</td>
+    </tr>
+    <tr>
+        <td><strong>Alternative Flows</strong></td>
+        <td>Covers manual waypoints and editing, but lacks <strong>tactical emergency dispatch (SOS)</strong> or <strong>custom sector deviation routes</strong> when pursuing poacher tracks.</td>
+        <td>Limits tactical flexibility and officer safety in emergency anti-poaching operations.</td>
+    </tr>
+    <tr>
+        <td><strong>Exception Handling</strong></td>
+        <td>Step 17 assumes network detection and batch upload always succeed with 100% reliability.</td>
+        <td>Ignores HTTP 500 errors, network dropouts, timeouts, and idempotent retry requirements.</td>
+    </tr>
+    <tr>
+        <td><strong>Usability Considerations</strong></td>
+        <td>Screen displays battery percentage but omits <strong>GPS precision lock status (±Xm)</strong> and <strong>pending offline sync counters</strong>.</td>
+        <td>Violates <strong>Nielsen's Heuristic #1 (Visibility of System Status)</strong>, leaving rangers uncertain whether telemetry coordinates are accurate.</td>
+    </tr>
+    <tr>
+        <td><strong>Traceability / UML Guidance</strong></td>
+        <td>The scenario does not link captured incidents to UC-03 (Community Conflict Triage) or UC-04 (Conservation Analytics Hotspot Reports), treating patrol data as an isolated silo.</td>
+        <td>Poor architectural cohesion; limits the ability of park managers to correlate patrol tracks with live collar alerts.</td>
+    </tr>
+</table>
+
+<!-- Suggested Improvements and Justification -->
+<h3>Suggested Improvements and Justification</h3>
+
+<table>
+    <tr>
+        <th style="width: 25%;">Area</th>
+        <th style="width: 35%;">Improvement in Refined Version</th>
+        <th style="width: 40%;">Justification and Benefit</th>
+    </tr>
+    <tr>
+        <td><strong>Main Flow</strong></td>
+        <td>Enforce a strict <strong>Local-First Transaction Pipeline</strong>: every waypoint and incident is committed to local storage first before triggering background synchronization.</td>
+        <td>Clarifies automated behavior, eliminates data race conditions, and guarantees zero data loss during intermittent jungle connectivity.</td>
+    </tr>
+    <tr>
+        <td><strong>Alternative Flows</strong></td>
+        <td>Add <strong>Alternative Flow A3: Custom Sector Route creation and manual deviation tracking</strong>, and <strong>Emergency SOS dispatch</strong>.</td>
+        <td>Reflects real-world operational flexibility and protects rangers facing armed poachers or wildlife attacks.</td>
+    </tr>
+    <tr>
+        <td><strong>Exception Flows</strong></td>
+        <td>Introduce <strong>Exception E5: Server Sync Failure with Exponential Backoff</strong> and idempotent UUID deduplication on <span class="code-inline">/api/patrols/sync</span>.</td>
+        <td>Improves robustness and aligns with real-world network failure recovery.</td>
+    </tr>
+    <tr>
+        <td><strong>Interaction Design</strong></td>
+        <td>Implement a <strong>Safe Two-Step Confirmation Dialog</strong> on End Patrol with route duration and distance metrics. Add live GPS chips and sync queue badge.</td>
+        <td>Strengthens usability and visual feedback, adhering to <strong>Nielsen's Heuristics #1 (Status Visibility) and #5 (Error Prevention)</strong>.</td>
+    </tr>
+    <tr>
+        <td><strong>UML Alignment</strong></td>
+        <td>Update sequence diagram with proper MVC layer separation (Boundary, Control, Entity), asynchronous arrows, and explicit <span class="code-inline">alt</span> and <span class="code-inline">opt</span> frames.</td>
+        <td>Increases logical soundness and ensures UML 2.0 completeness and consistency.</td>
+    </tr>
+    <tr>
+        <td><strong>Usability Enhancement</strong></td>
+        <td>Add dynamic vector trail map rendering walked breadcrumbs, landmark proximity inputs, and photo Base64 preview thumbnails.</td>
+        <td>Supports efficient field monitoring, improves user control, and reduces cognitive load under bright sunlight.</td>
+    </tr>
+    <tr>
+        <td><strong>Scalability &amp; Maintainability</strong></td>
+        <td>Modularize patrol controller, incident service, and sync manager with dual persistence (MongoDB + Disk JSON fallback); include 87 automated unit tests.</td>
+        <td>Supports clean code, maintainability, and effective verification for offline scalability.</td>
+    </tr>
+</table>
+
+<!-- Improved Use case Scenario -->
+<h3>Improved Use case Scenario</h3>
+
+<table>
+    <tr>
+        <th style="width: 25%;">Field</th>
+        <th style="width: 75%;">Refined Specification</th>
+    </tr>
+    <tr>
+        <td><strong>UseCase</strong></td>
+        <td>Manage Field Patrol and Report Incidents</td>
+    </tr>
+    <tr>
+        <td><strong>UseCase Scenario</strong></td>
+        <td>An authenticated Field Ranger conducts an assigned or custom anti-poaching patrol. The mobile system autonomously tracks geospatial breadcrumbs using device GPS, calculates live metrics (distance, elapsed time, battery), documents geo-tagged wildlife incidents with photographic evidence, supports emergency SOS dispatch, and asynchronously batch-syncs cached offline data with the central dashboard upon reconnection.</td>
+    </tr>
+    <tr>
+        <td><strong>Description</strong></td>
+        <td>Provides end-to-end operational support for rangers in protected wildlife reserves. Built on a <strong>Local-First Architecture</strong>, the system ensures uninterrupted operation offline. It handles automatic telemetry calculation (distance, duration, battery), offline incident documentation (snares, poaching camps, carcasses), manual checkpoint logging, and a fault-tolerant batch synchronization engine.</td>
+    </tr>
+    <tr>
+        <td><strong>Preconditions</strong></td>
+        <td>
+            • The Ranger is authenticated with assigned field credentials (RANGER role).<br>
+            • Device GPS sensor is operational with satellite lock.<br>
+            • Local storage quota is verified and available.
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Postconditions</strong></td>
+        <td>
+            • <strong>On Success:</strong> Patrol session is marked COMPLETED with finalized metrics (distance, elapsed time, waypoints). All incident records and photos are committed to local storage, batched into the sync engine, transmitted to the backend API (/api/patrols/sync), and marked SYNCED.<br>
+            • <strong>On Interruption / Offline:</strong> Patrol session and incident records are preserved locally with status PENDING_SYNC. Background sync engine schedules periodic retries until acknowledgment is received from the server.
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Mainflow</strong></td>
+        <td>
+            1. Ranger reviews pre-flight readiness (GPS lock precision, battery level, storage) and selects an assigned route or enters a custom sector route.<br>
+            2. Ranger taps <strong>"Begin Patrol Shift"</strong>.<br>
+            3. System generates a unique patrol UUID, sets status to IN_PROGRESS, records start timestamp, and captures initial baseline coordinates.<br>
+            4. System streams GPS waypoints periodically, computing incremental distance via the Haversine formula and updating the live route polyline.<br>
+            5. While patrolling, Ranger detects an illegal poacher wire snare.<br>
+            6. Ranger taps the floating <strong>"+ Log Field Incident"</strong> action button.<br>
+            7. System opens the incident modal, automatically populating physical latitude, longitude, elevation accuracy (±Xm), and timestamp.<br>
+            8. Ranger selects <strong>"Snare (Wire / Jaw Trap)"</strong> from the pre-defined classification list and sets threat severity to <strong>"HIGH"</strong>.<br>
+            9. Ranger captures photos using the device camera; the system encodes the image to Base64 and displays an immediate thumbnail preview.<br>
+            10. Ranger enters descriptive notes and landmarks: <em>"Single wire snare found on eastern trail. Snare dismantled and confiscated."</em><br>
+            11. Ranger taps <strong>"Save Incident Record"</strong>.<br>
+            12. System validates mandatory fields, serializes the record, and writes it directly to local storage with status PENDING_SYNC.<br>
+            13. System displays a green checkmark confirmation modal (<em>"Incident Saved Securely"</em>) and plots the incident pin onto the route map.<br>
+            14. Upon completing the patrol, Ranger taps <strong>"End Patrol"</strong>; the system displays an HCI confirmation modal detailing total duration and distance.<br>
+            15. Ranger confirms completion. System sets patrol status to COMPLETED, stops GPS polling, and archives the shift log.<br>
+            16. When network connectivity is established, the background Sync Engine reads all PENDING_SYNC records and executes a batch POST to /api/patrols/sync.<br>
+            17. Backend validates the payload, idempotently upserts records into MongoDB/Disk storage, and returns HTTP 200 with synced IDs.<br>
+            18. Client updates local status flags to SYNCED and updates the sync badge to zero.
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Alternative Flows</strong></td>
+        <td>
+            <strong>1a. Manual Waypoint Logging (A1):</strong> At step 4, Ranger identifies a non-incident point of interest (e.g., broken fence wire). Ranger taps "Add Manual Waypoint", enters a checkpoint note, and saves. System stores coordinates with flag isManual: true and continues tracking.<br><br>
+            <strong>2a. Ranger Edits Locally Saved Incident (A2):</strong> Prior to final sync, Ranger selects an incident from the shift feed and taps "Edit". System opens the edit form, allowing updates to description, landmark, or severity. Changes are updated locally and marked for sync.<br><br>
+            <strong>3a. Emergency SOS Dispatch (A3):</strong> At any point during patrol, Ranger taps "Emergency SOS (Panic)". System immediately broadcasts a critical priority alert with live coordinates to notify headquarters and dispatch tactical backup.
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Exception Flows</strong></td>
+        <td>
+            <strong>E1. Offline Operation / No Signal:</strong> During steps 11 or 15, if device has no cellular connectivity, system writes all records to local storage, displays "Saved Offline", and queues the batch for deferred transmission without blocking the user.<br><br>
+            <strong>E2. GPS Signal Degradation:</strong> If satellite lock is lost or degraded (&gt;20m accuracy), system displays an amber warning banner and provides a manual coordinate/landmark input override.<br><br>
+            <strong>E3. Mandatory Field Validation Failure:</strong> If Ranger attempts to save without selecting an Incident Type or entering a Description, system blocks submission, highlights missing fields in red, and presents an explicit inline error message.<br><br>
+            <strong>E4. Storage Quota Threshold:</strong> If device storage drops below safe thresholds, system compresses attached photo evidence or prompts to log textual coordinates without image attachments.<br><br>
+            <strong>E5. Batch Sync Network Timeout / Server Failure:</strong> If central server returns HTTP 5xx or request times out during Step 16, sync engine increments retry counter, applies exponential backoff, and keeps records safely flagged as PENDING_SYNC.
+        </td>
+    </tr>
+</table>
+
+<!-- Sequence Diagram Analysis -->
+<h3>Sequence Diagram</h3>
+<p><strong>Original Sequence Diagram (Assignment 1, Figure 3):</strong></p>
+<div class="diagram-box">
+    <em>[Original Sequence Diagram: Models interaction between Ranger, Mobile App, Local Storage, and Backend Sync Service]</em>
+</div>
+
+<h3>Critique of the Original Sequence Diagram</h3>
+
+<p><strong>1. Strengths:</strong></p>
+<ul>
+    <li><strong>Covers the Basic Workflow:</strong> Models the primary chronological progression from starting a patrol to logging incidents and finalizing the shift.</li>
+    <li><strong>Awareness of Offline Operation:</strong> Explicitly includes Local Storage and Sync Service lifelines to reflect field constraints in remote national parks.</li>
+    <li><strong>Iterative Logic:</strong> Correctly applies a UML <span class="code-inline">loop</span> combined fragment to denote periodic GPS waypoint tracking.</li>
+</ul>
+
+<p><strong>2. Weaknesses / Limitations:</strong></p>
+<ul>
+    <li><strong>No Clear Architectural Layering:</strong> Treats "Mobile App" as a single monolithic participant, violating standard Model-View-Controller (MVC) separation between Boundary (UI view), Control (patrol logic), and Entity (database).</li>
+    <li><strong>Flawed Dual-Path Branching (<span class="code-inline">alt [network available]</span> vs <span class="code-inline">[no network]</span>):</strong> Splitting online save and offline save creates severe race conditions and data fragmentation. All records must commit to local storage first.</li>
+    <li><strong>Naive Sync Acknowledgment:</strong> Assumes <span class="code-inline">uploadPatrolLogAndIncidents()</span> always returns <span class="code-inline">successAcknowledgement()</span>. HTTP 500 errors, network dropouts, and payload timeouts are ignored.</li>
+    <li><strong>Omission of Hardware Interfacing:</strong> Direct interactions with physical device hardware—such as camera capture, GPS sensor polling, and battery state monitoring—are absent.</li>
+    <li><strong>Improper Message Notation:</strong> User-facing notifications (e.g., "Incident Saved Locally") are drawn as raw return arrows pointing to the human actor rather than UI view events.</li>
+</ul>
+
+<h3>Suggested Improvements (as Reflected in the Improved Diagram)</h3>
+
+<p><strong>1. Clear MVC Layer Separation:</strong><br>
+Decomposed into Field Ranger (Actor), RangerMobileUI (Boundary), PatrolController / SyncEngine (Control), LocalStorage (Entity), and Central Backend API (Remote Server Entity).</p>
+
+<p><strong>2. Correct Message Passing and Activation:</strong><br>
+Applied synchronous (solid) and asynchronous (dashed) arrows properly to differentiate between local event dispatch and background API sync. Introduced explicit activation bars showing processing execution times.</p>
+
+<p><strong>3. Richer Exception &amp; Alternate Flows:</strong><br>
+Added explicit UML <span class="code-inline">alt</span> and <span class="code-inline">opt</span> frames for missing mandatory fields (E3), manual waypoints (A1), and server sync failure with retry backoff (E5).</p>
+
+<p><strong>4. Enhanced Logical Completeness &amp; Hardware Interaction:</strong><br>
+Explicitly models <span class="code-inline">navigator.geolocation</span> coordinate queries and Base64 camera photo conversion.</p>
+
+<p><strong>5. Improved System Feedback &amp; Two-Step Patrol Completion:</strong><br>
+Models the safe HCI confirmation modal summarizing duration and distance before concluding the patrol session.</p>
+
+<p><strong>6. Visual &amp; Structural Clarity:</strong><br>
+Applied distinct colored frames and labeled fragments to ensure unambiguous traceability between use case steps and sequence interactions.</p>
+
+<h3>Improved Sequence Diagram</h3>
+<div class="diagram-box">
+    <strong>Improved Sequence Diagram (Refined Architecture):</strong><br>
+    <em>Decomposed into Ranger (Actor) → RangerMobileUI (Boundary) → PatrolController / SyncEngine (Control) → LocalStorage (Entity) → Central REST API (Remote Entity).</em>
+</div>
+
+<!-- Original Wireframe -->
+<h3>Original Wireframe</h3>
+<div style="text-align: center; margin: 10pt 0;">
+    <img src="file:///C:/Users/muhan/.gemini/antigravity/brain/319799a5-9c5c-4fb5-8fba-fbc52878e0b3/patrol_wireframe_ui_1791516450153.jpg" style="max-width: 540pt; border: 1px solid #94a3b8;" /><br>
+    <small style="color: #64748b; font-style: italic;">Figure 8.1: Original Mobile Wireframe for Active Field Patrol</small>
+</div>
+
+<h4>Critique of the Original Wireframe (HCI &amp; Usability Heuristics):</h4>
+<ul>
+    <li><strong>Nielsen's Heuristic #5 (Error Prevention):</strong> The original wireframe placed a single, unprotected red "End" button at the bottom of the active map. In rugged jungle terrain with wet screens or gloves, accidental taps cause premature patrol termination. <em>Improvement:</em> Replaced with a safe two-step confirmation modal summarizing route duration and distance.</li>
+    <li><strong>Nielsen's Heuristic #1 (Visibility of System Status):</strong> The original screen displayed battery percentage but omitted GPS accuracy/lock status (e.g., whether coordinates are accurate to ±3m or degraded to ±50m) and offline sync queue counters. <em>Improvement:</em> Added live GPS chips (<span class="code-inline">● GPS: 6.4715, 80.8985 (±3.2m Locked)</span>) and an explicit Pending Sync badge.</li>
+    <li><strong>Outdoor Usability &amp; Contrast:</strong> Thin fonts and delicate borders in the original design perform poorly under bright tropical sunlight. <em>Improvement:</em> Redesigned with a high-contrast dark palette, emerald salience accents, and large touch targets (minimum 48×48 dp).</li>
+</ul>
+
+<!-- Implementation -->
+<h3>Implementation</h3>
+<div style="text-align: center; margin: 10pt 0;">
+    <img src="file:///C:/Users/muhan/.gemini/antigravity/brain/319799a5-9c5c-4fb5-8fba-fbc52878e0b3/patrol_dashboard_ui_1791516415532.jpg" style="max-width: 540pt; border: 1px solid #94a3b8; margin-bottom: 6pt;" /><br>
+    <small style="color: #64748b; font-style: italic;">Figure 9.1: Active Patrol Console with Live GPS Telemetry, Distance Calculation, & Vector Trail Map</small><br><br>
+    <img src="file:///C:/Users/muhan/.gemini/antigravity/brain/319799a5-9c5c-4fb5-8fba-fbc52878e0b3/incident_report_modal_1791516433494.jpg" style="max-width: 540pt; border: 1px solid #94a3b8; margin-bottom: 6pt;" /><br>
+    <small style="color: #64748b; font-style: italic;">Figure 9.2: Field Incident Reporting Modal with Auto-Populated Coordinates & Photo Evidence</small><br><br>
+    <img src="file:///C:/Users/muhan/.gemini/antigravity/brain/319799a5-9c5c-4fb5-8fba-fbc52878e0b3/end_patrol_modal_1791516467780.jpg" style="max-width: 540pt; border: 1px solid #94a3b8; margin-bottom: 6pt;" /><br>
+    <small style="color: #64748b; font-style: italic;">Figure 9.3: Safe Two-Step Patrol Conclusion Modal (Heuristic #5) with Summary & Offline Queue Notice</small>
+</div>
+
+<h4>Key Screen Implementations:</h4>
+<ol>
+    <li><strong>Pre-Patrol Setup Screen:</strong> Live hardware GPS lock (±3.2m), battery reading via <span class="code-inline">navigator.getBattery()</span>, route selection or custom sector route creation.</li>
+    <li><strong>Active Patrol Console &amp; Dynamic Vector Map:</strong> Live elapsed timer, Haversine formula distance computation, dynamic SVG map rendering walked GPS breadcrumbs, manual checkpoints, and incident pins.</li>
+    <li><strong>Field Incident Reporting Form Modal:</strong> Auto-populates physical coordinates, incident classification (Snare, Poaching, Carcass, etc.), threat severity levels, and real camera file upload with Base64 encoding and thumbnail previews.</li>
+    <li><strong>Offline-First Resilience &amp; Batch Sync Engine:</strong> Interactive Online/Offline toggle simulating deep reserve conditions. When offline, records queue in LocalStorage; when online, "Sync Now" transmits a batch payload to <span class="code-inline">/api/patrols/sync</span> with idempotent deduplication.</li>
+    <li><strong>Incident Edit &amp; Inspection Table (A2):</strong> Full table of recorded shift incidents with inline editing capabilities before synchronization.</li>
+</ol>
+
+<!-- Overview Technologies -->
+<h3>Overview: Technologies, Frameworks, and Architecture Used</h3>
+
+<ul>
+    <li><strong>Architecture:</strong> Three-Tier Local-First Architecture (Presentation Layer, Application Service Layer, Dual Persistence Layer).</li>
+    <li><strong>Frontend:</strong> React 19, Vite, Tailwind CSS, Lucide Icons, HTML5 Geolocation API, FileReader API.</li>
+    <li><strong>Backend:</strong> Node.js, Express.js, Mongoose ODM, and local File-System JSON persistence fallback (<span class="code-inline">data/patrols.json</span>, <span class="code-inline">data/incidents.json</span>).</li>
+    <li><strong>Design &amp; Quality Practices:</strong> Applied SOLID principles, refactoring techniques, and defensive validation learned in SE3070 lectures.</li>
+    <li><strong>Automated Unit Testing:</strong> Jest and Supertest with <strong>87 automated tests passing across 5 test suites (0 failures, &gt;85% code coverage)</strong> verifying patrol lifecycles, Haversine calculations, manual waypoints, incident editing, validation errors, and sync engine deduplication.</li>
+</ul>
+
+<p style="margin-top: 14pt;"><strong>GitHub repo URL:</strong> <a href="https://github.com/HarithManjuka/wildlife-monitoring-backend.git">https://github.com/HarithManjuka/wildlife-monitoring-backend.git</a></p>
+
+</div>
+</body>
+</html>
